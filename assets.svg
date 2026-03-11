@@ -1,0 +1,63 @@
+<!--
+  ============================================================
+  عيد الفطر المبارك — Research and Innovation Complex
+  Hexagon Brand Theme — SVG Assets Reference
+  assets.svg
+  ============================================================
+
+  الملف هذا للمرجع فقط — يوضح مقاسات وإحداثيات الهيكساغون
+  المستخدمة في index.html
+
+  ════════════════════════════════════════════════
+  HEX GEOMETRY (pointy-top)
+  Size: 148px wide × 128px tall
+  Radius r = 74px
+  Half-height = 37px (short side)
+
+  Points formula from center (cx, cy):
+    top:    (cx,      cy - 74)
+    TR:     (cx + 64, cy - 37)
+    BR:     (cx + 64, cy + 37)
+    bottom: (cx,      cy + 74)
+    BL:     (cx - 64, cy + 37)
+    TL:     (cx - 64, cy - 37)
+
+  Gap = 5px white stroke on each hex
+
+  ════════════════════════════════════════════════
+  CLUSTER LAYOUT
+
+  BOTTOM-LEFT (green → teal)
+  ┌────────────────────────────────┐
+  │  Row 3 (opacity 0.5-0.6)       │  y=710
+  │  [A] [B] [C]                   │
+  │   Row 2 (staggered)            │  y=838
+  │    [A] [B] [C]                 │
+  │  Row 1 (anchored to bottom)    │  y=1040
+  │  [A] [B] [C]                   │
+  └────────────────────────────────┘
+
+  BOTTOM-RIGHT (sky → blue, mirror)
+  Same structure, anchored to right edge x=1920
+
+  ════════════════════════════════════════════════
+  COLOR MAPPING
+
+  BL Left→Right:   lime → mint → teal
+  BR Right→Left:   dark-blue → sky → light-sky
+
+  Matches ID card:
+  - Left side:  yellowy-green (#AEDC52) through teal (#3ABFB8)
+  - Right side: light sky (#8ED0F0) through deeper blue (#3A72C0)
+  ============================================================
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 148 128"
+     style="display:block;margin:auto;">
+  <!-- Example single hex for reference -->
+  <polygon points="74,0 138,37 138,91 74,128 10,91 10,37"
+           fill="#3ABFB8" stroke="white" stroke-width="5"/>
+  <text x="74" y="68" text-anchor="middle"
+        font-family="sans-serif" font-size="12" fill="white">
+    148 × 128
+  </text>
+</svg>
