@@ -1,5 +1,49 @@
+/* ── READ POPUP STYLES (injected) ───────────────────────── */
+(function () {
+  const s = document.createElement('style');
+  s.textContent = `
+    .read-popup {
+      position: fixed;
+      background: #fffdf0;
+      border: 2px solid rgba(200,146,10,.35);
+      border-radius: 14px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.22);
+      overflow: hidden;
+      opacity: 0;
+      transform: scale(0.75);
+      transition: opacity .22s ease, transform .22s ease;
+      z-index: 9000;
+      cursor: default;
+    }
+    .read-popup.open {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .read-popup img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+    .read-popup-close {
+      position: absolute;
+      top: 6px; right: 8px;
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .read-popup-close:hover { background: rgba(0,0,0,.7); }
+  `;
+  document.head.appendChild(s);
+})();
+
 /* ════════════════════════════════════════════════════════════
-   عيد الفطر المبارك — Research and Innovation Complex
+   Eid Al-Fitr Mubarak — Research and Innovation Complex
    script.js  —  v3: wall colours, dead zones, multi-modal
 ════════════════════════════════════════════════════════════ */
 
@@ -14,10 +58,11 @@
   } catch (e) {}
 })();
 
-/* ── FLOATING MINI HEXAGONS ─────────────────────────────── */
+/* ── FLOATING SHAPES: hexagons + crescents + stars ──────── */
 (function () {
   const fc = document.getElementById('floatCanvas');
   const fCtx = fc.getContext('2d');
+
   const palette = [
     'rgba(0,154,68,',
     'rgba(92,200,160,',
@@ -25,8 +70,16 @@
     'rgba(91,174,232,',
     'rgba(200,146,10,',
   ];
+  // Gold-only palette for crescents/stars
+  const goldPalette = [
+    'rgba(200,146,10,',
+    'rgba(220,170,20,',
+    'rgba(180,130,5,',
+  ];
+
   let floaters = [];
 
+  /* ── shape helpers ── */
   function hexPoints(cx, cy, r, angle) {
     const pts = [];
     for (let i = 0; i < 6; i++) {
@@ -36,24 +89,99 @@
     return pts;
   }
 
+  function drawCrescent(ctx, cx, cy, r, rot, color, alpha) {
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rot);
+
+    const outerR = r;
+    const innerR = r * 0.82;
+    const offset = r * 0.52;
+
+    // Step 1: clip to outer circle boundary
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+    ctx.clip();
+
+    // Step 2: fill outer circle
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+    ctx.fillStyle = color + alpha.toFixed(2) + ')';
+    ctx.fill();
+
+    // Step 3: punch out inner circle → true crescent
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(offset, 0, innerR, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore(); // end clip + restore compositing to source-over
+
+    // Step 4: outer rim stroke
+    ctx.beginPath();
+    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
+    ctx.strokeStyle = color + Math.min(1, alpha * 1.8).toFixed(2) + ')';
+    ctx.lineWidth = 0.7;
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
+  function drawStar(ctx, cx, cy, r, points, rot, color, alpha) {
+    const inner = r * 0.42;
+    ctx.beginPath();
+    for (let i = 0; i < points * 2; i++) {
+      const a = rot + (Math.PI / points) * i - Math.PI / 2;
+      const rad = i % 2 === 0 ? r : inner;
+      i === 0
+        ? ctx.moveTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a))
+        : ctx.lineTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a));
+    }
+    ctx.closePath();
+    ctx.fillStyle = color + alpha.toFixed(2) + ')';
+    ctx.fill();
+    ctx.strokeStyle = color + Math.min(1, alpha * 1.5).toFixed(2) + ')';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  /* ── spawn ── */
   function spawn() {
-    const r = Math.random() * 12 + 6;
+    // 50% hex, 25% crescent, 25% star
+    const roll = Math.random();
+    const type = roll < 0.50 ? 'hex'
+               : roll < 0.75 ? 'crescent'
+               : 'star';
+
+    const isGold = type !== 'hex';
+    const pal    = isGold ? goldPalette : palette;
+    const r      = type === 'hex'      ? Math.random() * 12 + 6
+                 : type === 'crescent' ? Math.random() * 10 + 7
+                 :                       Math.random() * 7  + 4;
+
     return {
+      type,
       x: Math.random() * fc.width,
       y: fc.height + r * 2,
-      r, vx: (Math.random() - 0.5) * 0.4,
-      vy: -(Math.random() * 0.5 + 0.2),
+      r,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: -(Math.random() * 0.45 + 0.15),
       rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.012,
-      alpha: 0, maxAlpha: Math.random() * 0.18 + 0.06,
+      rotSpeed: (Math.random() - 0.5) * (type === 'crescent' ? 0.006 : 0.013),
+      alpha: 0,
+      maxAlpha: isGold
+        ? Math.random() * 0.22 + 0.08   // gold slightly brighter
+        : Math.random() * 0.18 + 0.06,
       fadeState: 'in',
-      color: palette[Math.floor(Math.random() * palette.length)],
+      color: pal[Math.floor(Math.random() * pal.length)],
+      starPoints: type === 'star' ? (Math.random() < 0.5 ? 5 : 6) : 0,
     };
   }
 
   function resizeFloat() {
     fc.width = innerWidth; fc.height = innerHeight;
-    floaters = Array.from({ length: 28 }, () => {
+    floaters = Array.from({ length: 38 }, () => {
       const f = spawn();
       f.y = Math.random() * fc.height;
       f.alpha = Math.random() * f.maxAlpha;
@@ -65,21 +193,37 @@
     fCtx.clearRect(0, 0, fc.width, fc.height);
     floaters.forEach((f, i) => {
       f.x += f.vx; f.y += f.vy; f.rot += f.rotSpeed;
-      if (f.fadeState === 'in') { f.alpha += 0.003; if (f.alpha >= f.maxAlpha) f.fadeState = 'hold'; }
-      else if (f.fadeState === 'hold') { if (f.y < fc.height * 0.15) f.fadeState = 'out'; }
-      else { f.alpha -= 0.004; if (f.alpha <= 0) { floaters[i] = spawn(); return; } }
-      const pts = hexPoints(f.x, f.y, f.r, f.rot);
-      fCtx.beginPath();
-      fCtx.moveTo(pts[0][0], pts[0][1]);
-      pts.slice(1).forEach(p => fCtx.lineTo(p[0], p[1]));
-      fCtx.closePath();
-      fCtx.strokeStyle = f.color + (f.alpha * 1.4).toFixed(2) + ')';
-      fCtx.lineWidth = 1.2; fCtx.stroke();
-      fCtx.fillStyle = f.color + f.alpha.toFixed(2) + ')';
-      fCtx.fill();
+
+      // Fade in/hold/fade out
+      if (f.fadeState === 'in') {
+        f.alpha += 0.003;
+        if (f.alpha >= f.maxAlpha) f.fadeState = 'hold';
+      } else if (f.fadeState === 'hold') {
+        if (f.y < fc.height * 0.15) f.fadeState = 'out';
+      } else {
+        f.alpha -= 0.004;
+        if (f.alpha <= 0) { floaters[i] = spawn(); return; }
+      }
+
+      if (f.type === 'hex') {
+        const pts = hexPoints(f.x, f.y, f.r, f.rot);
+        fCtx.beginPath();
+        fCtx.moveTo(pts[0][0], pts[0][1]);
+        pts.slice(1).forEach(p => fCtx.lineTo(p[0], p[1]));
+        fCtx.closePath();
+        fCtx.strokeStyle = f.color + (f.alpha * 1.4).toFixed(2) + ')';
+        fCtx.lineWidth = 1.2; fCtx.stroke();
+        fCtx.fillStyle = f.color + f.alpha.toFixed(2) + ')';
+        fCtx.fill();
+      } else if (f.type === 'crescent') {
+        drawCrescent(fCtx, f.x, f.y, f.r, f.rot, f.color, f.alpha);
+      } else {
+        drawStar(fCtx, f.x, f.y, f.r, f.starPoints, f.rot, f.color, f.alpha);
+      }
     });
     requestAnimationFrame(drawFloat);
   }
+
   resizeFloat(); drawFloat();
   window.addEventListener('resize', resizeFloat);
 })();
@@ -124,7 +268,7 @@ const writtenFill = [['#FFF3C8','#ffe656'],['#FFEAC0','#ffe656']];
 function buildGrid() {
   const W = hexCanvas.width, H = hexCanvas.height;
 
-  hexR = Math.max(28, Math.min(62, W * 0.032));
+  hexR = Math.max(18, Math.min(38, W * 0.018));
   const hw = hexR * Math.sqrt(3);
   const vGap = hexR * 2 * 0.75;
 
@@ -143,14 +287,14 @@ function buildGrid() {
       const mid = W / 2;
       const side = cx < mid ? 'left' : 'right';
 
-      /* فقط الجوانب (30%) */
+      /* Side zones only (30%) */
       const inSideZone = side === 'left'
         ? cx < W * 0.30
-        : cx > W * 0.70;
+        : cx > W * 0.62;
 
       if (!inSideZone) continue;
 
-      /* الصفوف غير القابلة للوصول */
+      /* Inaccessible rows */
       const inDeadTop = cy < H * DEAD_TOP_PCT;
       const inDeadBottom = cy > H * DEAD_BOTTOM_PCT;
 
@@ -186,9 +330,7 @@ function drawOneHex(h, hl) {
   hexPath(h.cx, h.cy, r - gap / 2);
 
   let colors;
-  if (g) {
-    colors = writtenFill[(Math.abs(h.row + h.col)) % writtenFill.length];
-  } else {
+  {
     const pal = h.side === 'left' ? leftColors : rightColors;
     colors = pal[(Math.abs(h.row + h.col)) % pal.length];
   }
@@ -205,19 +347,18 @@ function drawOneHex(h, hl) {
   hCtx.fill();
   hCtx.shadowBlur = 0; hCtx.globalAlpha = 1;
 
-hCtx.strokeStyle = 'rgba(80,60,20,.25)'
-
+  hCtx.strokeStyle = 'rgba(80,60,20,.25)';
   hCtx.stroke();
 
   if (g) {
     try {
       const img = new Image();
       img.src = g.img;
-      const iw = hexR * 1.2, ih = hexR * 1.0;
+      const iw = hexR * 1.7, ih = hexR * 1.7;
       hCtx.save();
       hexPath(h.cx, h.cy, r - gap / 2 - 2);
       hCtx.clip();
-      hCtx.globalAlpha = 0.85;
+      hCtx.globalAlpha = 1;
       hCtx.drawImage(img, h.cx - iw / 2, h.cy - ih / 2, iw, ih);
       hCtx.restore();
     } catch (e) {}
@@ -323,12 +464,12 @@ function openDrawModal(hex, tapX, tapY) {
   modal.style.cssText = `left:${left}px; top:${top}px; width:${mW}px;`;
 
   modal.innerHTML = `
-    <div class="modal-header"><h2>✦ اكتب معايدتك</h2></div>
+    <div class="modal-header"><h2>✦ Write Your Greeting</h2></div>
     <div class="draw-wrap">
       <canvas class="dc"></canvas>
       <div class="draw-toolbar">
         <div class="toolbar-left">
-          <span class="tool-label">اللون:</span>
+          <span class="tool-label">Color:</span>
           <div class="swatch active" data-color="#006630" style="background:#006630"></div>
           <div class="swatch" data-color="#1C6840" style="background:#1C6840"></div>
           <div class="swatch" data-color="#C8920A" style="background:#C8920A"></div>
@@ -336,17 +477,17 @@ function openDrawModal(hex, tapX, tapY) {
           <div class="swatch" data-color="#4A1A7A" style="background:#4A1A7A"></div>
         </div>
         <div class="toolbar-right">
-          <span class="tool-label">الحجم:</span>
+          <span class="tool-label">Size:</span>
           <button class="size-btn" data-size="3" style="width:24px;height:24px;"><span style="width:4px;height:4px;"></span></button>
           <button class="size-btn active" data-size="6" style="width:28px;height:28px;"><span style="width:8px;height:8px;"></span></button>
           <button class="size-btn" data-size="11" style="width:32px;height:32px;"><span style="width:13px;height:13px;"></span></button>
-          <button class="btn-clear">مسح ↺</button>
+          <button class="btn-clear">Clear ↺</button>
         </div>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-primary submit-btn">نشر ✦</button>
-      <button class="btn btn-secondary cancel-btn">إلغاء</button>
+      <button class="btn btn-primary submit-btn">Submit ✦</button>
+      <button class="btn btn-secondary cancel-btn">Cancel</button>
     </div>
   `;
 
@@ -361,18 +502,16 @@ function openDrawModal(hex, tapX, tapY) {
     const dpr = window.devicePixelRatio || 1;
     dc.width  = dc.offsetWidth  * dpr;
     dc.height = dc.offsetHeight * dpr;
+    // Keep canvas transparent (no white fill) so drawing looks like a sticker
+    dc.style.background = '#FFF9C4';
     const ctx = dc.getContext('2d');
     ctx.scale(dpr, dpr);
-    ctx.fillStyle = '#FAFFFE';
-    ctx.fillRect(0, 0, dc.offsetWidth, dc.offsetHeight);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
   }
 
   function clearDc() {
     const ctx = dc.getContext('2d');
-    ctx.clearRect(0, 0, dc.offsetWidth, dc.offsetHeight);
-    ctx.fillStyle = '#FAFFFE';
-    ctx.fillRect(0, 0, dc.offsetWidth, dc.offsetHeight);
+    ctx.clearRect(0, 0, dc.width, dc.height);
   }
 
   setTimeout(() => { initDc(); modal.classList.add('open'); }, 30);
@@ -440,8 +579,8 @@ function openDrawModal(hex, tapX, tapY) {
     const ctx = dc.getContext('2d');
     const data = ctx.getImageData(0, 0, dc.width, dc.height).data;
     let hasContent = false;
-    for (let i = 0; i < data.length; i += 16) {
-      if (data[i] < 240 || data[i+1] < 240 || data[i+2] < 240) { hasContent = true; break; }
+    for (let i = 3; i < data.length; i += 16) {
+      if (data[i] > 20) { hasContent = true; break; }
     }
     if (!hasContent) {
       dc.style.outline = '2px solid rgba(200,50,50,.6)';
@@ -460,17 +599,67 @@ function openDrawModal(hex, tapX, tapY) {
   modal.addEventListener('click',      e => e.stopPropagation());
 }
 
-/* ── READ MODAL ──────────────────────────────────────────── */
-const readOverlay = document.getElementById('readOverlay');
+/* ── READ POPUP — same card style & position as draw-modal ── */
+const activeReadPopups = {};
 
-function showRead(id) {
-  const g = greetings[id]; if (!g) return;
-  document.getElementById('readImg').src = g.img;
-  readOverlay.classList.add('open');
+function showRead(hexId) {
+  const g = greetings[hexId]; if (!g) return;
+
+  // Toggle off if already open
+  if (activeReadPopups[hexId]) { closeReadPopup(hexId); return; }
+
+  const hex = hexes.find(x => x.id === hexId); if (!hex) return;
+
+  const W = innerWidth, H = innerHeight;
+  const mW = Math.min(380, W * 0.3, 380);
+  const mH = 320;
+  let left, top;
+
+  // Exact same positioning logic as openDrawModal
+  if (hex.side === 'left') {
+    left = Math.max(8, hex.cx + hexR * 1.5);
+  } else {
+    left = Math.min(W - mW - 8, hex.cx - hexR * 1.5 - mW);
+  }
+  top = Math.max(8, Math.min(H - mH - 8, hex.cy - mH / 2));
+
+  const popup = document.createElement('div');
+  popup.className = 'draw-modal'; // reuse exact same card styles
+  popup.style.cssText = `left:${left}px; top:${top}px; width:${mW}px;`;
+
+  popup.innerHTML = `
+    <div class="modal-header"><h2>✦ Greeting</h2></div>
+    <div class="read-img-wrap" style="border-radius:12px;overflow:hidden;border:1.5px solid rgba(0,154,68,.25);">
+      <img src="${g.img}" alt="greeting" style="width:100%;height:${mH - 90}px;object-fit:contain;display:block;background:#FFF9C4;">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary read-close-btn">Close ✕</button>
+    </div>
+  `;
+
+  modalsContainer.appendChild(popup);
+  activeReadPopups[hexId] = popup;
+
+  // Animate in — same timing as draw-modal
+  setTimeout(() => popup.classList.add('open'), 30);
+
+  popup.querySelector('.read-close-btn').addEventListener('click', e => {
+    e.stopPropagation(); closeReadPopup(hexId);
+  });
+
+  // Block events from reaching hexCanvas
+  popup.addEventListener('touchstart', e => e.stopPropagation(), { passive: true });
+  popup.addEventListener('touchmove',  e => e.stopPropagation(), { passive: true });
+  popup.addEventListener('touchend',   e => e.stopPropagation(), { passive: true });
+  popup.addEventListener('mousedown',  e => e.stopPropagation());
+  popup.addEventListener('click',      e => e.stopPropagation());
 }
 
-document.getElementById('readClose').addEventListener('click', () => readOverlay.classList.remove('open'));
-readOverlay.addEventListener('click', e => { if (e.target === readOverlay) readOverlay.classList.remove('open'); });
+function closeReadPopup(hexId) {
+  const p = activeReadPopups[hexId]; if (!p) return;
+  p.classList.remove('open');
+  setTimeout(() => { p.remove(); delete activeReadPopups[hexId]; }, 300);
+}
 
 /* ── TOAST ───────────────────────────────────────────────── */
 function showToast() {

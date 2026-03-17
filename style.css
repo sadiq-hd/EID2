@@ -91,18 +91,18 @@ html, body {
   font-size: clamp(52px,8.5vw,130px); font-weight: 700; line-height: 1.05;
   background: linear-gradient(135deg, var(--aramco-dark), #157070, #1558A0);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: fadeUp 1.3s ease-out .1s both;
+  animation: fadeUp 1.6s ease-out .56s both;
 }
 .greeting-sub {
   font-family: 'Amiri', serif;
   font-size: clamp(20px,3.8vw,52px); margin-top: 10px;
   background: linear-gradient(135deg, var(--aramco-green), #2278B0);
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: fadeUp 1.3s ease-out .25s both;
+  animation: fadeUp 1.6s ease-out .25s both;
 }
 .divider {
   display: flex; align-items: center; gap: 15px; margin: 2.2vh 0;
-  animation: fadeUp 1.3s ease-out .4s both;
+  animation: fadeUp 1.8s ease-out .4s both;
 }
 .divider-line {
   width: clamp(80px,18vw,280px); height: 1.5px;
@@ -145,7 +145,68 @@ html, body {
   white-space: nowrap;
 }
 
-@keyframes fadeUp   { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
+
+
+/* ════════════════════════════════════════════════════════════
+   TEXT SHIMMER — subtle light sweep, no movement
+════════════════════════════════════════════════════════════ */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.greeting-ar {
+  background: linear-gradient(
+    105deg,
+    var(--aramco-dark) 30%,
+    #157070 45%,
+    #c8f0d8 50%,
+    #1558A0 55%,
+    var(--aramco-dark) 70%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: fadeUp 1.3s ease-out .1s both, shimmer 5s linear 1.5s infinite;
+}
+
+.greeting-en {
+  background: linear-gradient(
+    105deg,
+    var(--aramco-dark) 30%,
+    #157070 45%,
+    #b8ead4 50%,
+    #1558A0 55%,
+    var(--aramco-dark) 70%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: fadeUp 1.3s ease-out .3s both, shimmer 5s linear 2s infinite;
+}
+
+.greeting-sub {
+  background: linear-gradient(
+    105deg,
+    var(--aramco-green) 35%,
+    #7de8c0 50%,
+    #2278B0 65%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: fadeUp 1.3s ease-out .25s both, shimmer 6s linear 2.5s infinite;
+}
+
+.building-name-text {
+  background: linear-gradient(
+    105deg,
+    var(--aramco-dark) 35%,
+    #3ab8a0 50%,
+    #1A6A8A 65%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: shimmer 7s linear 3s infinite;
+}
 
 /* ── COUNTER ─────────────────────────────────────────────── */
 .counter-badge {
@@ -173,7 +234,6 @@ html, body {
   transform: scale(.93) translateY(12px);
   opacity: 0;
   transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .22s ease;
-  /* positioned by JS */
 }
 .draw-modal::before {
   content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
@@ -183,9 +243,7 @@ html, body {
 }
 .draw-modal.open { transform: scale(1) translateY(0); opacity: 1; }
 
-.modal-header {
-  text-align: center; margin-bottom: 10px;
-}
+.modal-header { text-align: center; margin-bottom: 10px; }
 .modal-header h2 {
   font-family: 'Amiri', serif; font-size: clamp(15px,1.8vw,20px);
   background: linear-gradient(135deg,var(--aramco-dark),#157070);
@@ -196,7 +254,6 @@ html, body {
 .draw-wrap {
   position: relative; border-radius: 12px; overflow: hidden;
   border: 1.5px solid rgba(0,154,68,.25);
-  background: #FAFFFE;
   box-shadow: inset 0 2px 8px rgba(0,154,68,.06);
 }
 .draw-wrap canvas {
@@ -260,39 +317,71 @@ html, body {
 }
 .btn-secondary:hover { background: rgba(0,60,30,.12); }
 
-/* ── READ MODAL ──────────────────────────────────────────── */
-.read-overlay {
-  position: fixed; inset: 0; z-index: 100;
-  background: rgba(230,249,236,.88); backdrop-filter: blur(14px);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0; pointer-events: none; transition: opacity .28s ease;
+/* ════════════════════════════════════════════════════════════
+   READ POPUP — inline, positioned near hex, multi-instance
+════════════════════════════════════════════════════════════ */
+.read-popup {
+  position: fixed;
+  z-index: 9000;
+  background: #fffdf0;
+  border: 1.5px solid rgba(200,146,10,.35);
+  border-radius: 16px;
+  box-shadow: 0 8px 36px rgba(0,0,0,.22), 0 2px 0 rgba(255,255,255,.9) inset;
+  overflow: hidden;
+  opacity: 0;
+  transform: scale(0.78) translateY(8px);
+  transition: opacity .22s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
+  cursor: default;
 }
-.read-overlay.open { opacity: 1; pointer-events: all; }
-.read-card {
-  background: #fff; border: 1.5px solid rgba(0,154,68,.25);
-  border-radius: 24px; padding: clamp(22px,3vw,42px);
-  width: clamp(280px,80vw,500px); text-align: center;
-  box-shadow: 0 12px 50px rgba(0,154,68,.18);
-  transform: scale(.93) translateY(18px);
-  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
-  position: relative; overflow: hidden;
-}
-.read-card::before {
+.read-popup::before {
   content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
   width:55%; height:2px;
-  background: linear-gradient(to right,transparent,var(--aramco-green),transparent);
+  background: linear-gradient(to right,transparent,var(--gold),transparent);
+  border-radius:2px;
 }
-.read-overlay.open .read-card { transform: scale(1) translateY(0); }
-.read-img-wrap { border-radius: 10px; overflow: hidden; }
-.read-img { max-width: 100%; display: block; border-radius: 10px; }
-.read-close {
-  display: inline-block; margin-top: 18px;
-  padding: 9px 26px; border-radius: 50px;
-  background: rgba(0,154,68,.1); border: 1px solid rgba(0,154,68,.22);
-  color: rgba(0,80,40,.65); cursor: pointer;
-  font-family: 'Tajawal', sans-serif; font-size: 14px; transition: all .2s;
+.read-popup.open {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }
-.read-close:hover { background: rgba(0,154,68,.22); }
+.read-popup img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+  padding: 6px;
+}
+.read-popup-close {
+  position: absolute;
+  top: 7px; right: 8px;
+  background: rgba(0,0,0,.4);
+  color: #fff;
+  border-radius: 50%;
+  width: 24px; height: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background .15s;
+  line-height: 1;
+  z-index: 2;
+}
+.read-popup-close:hover { background: rgba(0,0,0,.7); }
+
+
+/* ════════════════════════════════════════════════════════════
+   CORNER ORNAMENTS — geometric Islamic pattern
+════════════════════════════════════════════════════════════ */
+.corner {
+  position: fixed;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.18;
+  width: clamp(100px, 14vw, 200px);
+  height: clamp(100px, 14vw, 200px);
+}
+.corner svg { width: 100%; height: 100%; }
+.corner-tl { top: 0;    left: 0; }
+.corner-tr { top: 0;    right: 0;  transform: scaleX(-1); }
+.corner-bl { bottom: 0; left: 0;   transform: scaleY(-1); }
+.corner-br { bottom: 0; right: 0;  transform: scale(-1); }
 
 /* ── TOAST ───────────────────────────────────────────────── */
 .toast {

@@ -8,7 +8,8 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
- <!-- Building name large, below greeting -->
+
+    <!-- Building name -->
   <div class="building-name-main">
     <div class="building-name-rule"></div>
     <div class="building-name-text">Research &amp; Innovation Complex</div>
@@ -20,54 +21,150 @@
 <canvas id="floatCanvas"></canvas>
 <canvas id="hexCanvas"></canvas>
 
+<!-- CORNER ORNAMENTS -->
+<div class="corner corner-tl">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <!-- Radiating hex lines from corner -->
+    <g stroke="#009A44" stroke-width="1.2">
+      <!-- Large arc -->
+      <path d="M0,0 Q40,80 0,160"/>
+      <path d="M0,0 Q80,40 160,0"/>
+      <!-- Medium arcs -->
+      <path d="M0,0 Q30,55 0,110"/>
+      <path d="M0,0 Q55,30 110,0"/>
+      <!-- Small arcs -->
+      <path d="M0,0 Q18,36 0,72"/>
+      <path d="M0,0 Q36,18 72,0"/>
+      <!-- Cross lines -->
+      <line x1="0" y1="0" x2="140" y2="60"/>
+      <line x1="0" y1="0" x2="60"  y2="140"/>
+      <line x1="0" y1="0" x2="170" y2="30"/>
+      <line x1="0" y1="0" x2="30"  y2="170"/>
+    </g>
+    <!-- Hexagons along diagonal -->
+    <g stroke="#C8920A" stroke-width="1" fill="rgba(200,146,10,0.08)">
+      <polygon points="30,12 38,8 46,12 46,20 38,24 30,20"/>
+      <polygon points="58,30 68,24 78,30 78,42 68,48 58,42"/>
+      <polygon points="10,45 18,41 26,45 26,53 18,57 10,53"/>
+      <polygon points="18,75 28,69 38,75 38,87 28,93 18,87"/>
+      <polygon points="88,14 96,10 104,14 104,22 96,26 88,22"/>
+    </g>
+    <!-- Star at origin area -->
+    <g stroke="#009A44" stroke-width="0.8" fill="rgba(0,154,68,0.06)">
+      <polygon points="0,32 6,18 14,28 20,14 26,28 32,20 28,34 42,32 30,40 38,52 24,46 20,60 16,46 2,52 10,40 0,32"/>
+    </g>
+  </svg>
+</div>
+
+<div class="corner corner-tr">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <g stroke="#009A44" stroke-width="1.2">
+      <path d="M0,0 Q40,80 0,160"/>
+      <path d="M0,0 Q80,40 160,0"/>
+      <path d="M0,0 Q30,55 0,110"/>
+      <path d="M0,0 Q55,30 110,0"/>
+      <path d="M0,0 Q18,36 0,72"/>
+      <path d="M0,0 Q36,18 72,0"/>
+      <line x1="0" y1="0" x2="140" y2="60"/>
+      <line x1="0" y1="0" x2="60"  y2="140"/>
+      <line x1="0" y1="0" x2="170" y2="30"/>
+      <line x1="0" y1="0" x2="30"  y2="170"/>
+    </g>
+    <g stroke="#C8920A" stroke-width="1" fill="rgba(200,146,10,0.08)">
+      <polygon points="30,12 38,8 46,12 46,20 38,24 30,20"/>
+      <polygon points="58,30 68,24 78,30 78,42 68,48 58,42"/>
+      <polygon points="10,45 18,41 26,45 26,53 18,57 10,53"/>
+      <polygon points="18,75 28,69 38,75 38,87 28,93 18,87"/>
+      <polygon points="88,14 96,10 104,14 104,22 96,26 88,22"/>
+    </g>
+    <g stroke="#009A44" stroke-width="0.8" fill="rgba(0,154,68,0.06)">
+      <polygon points="0,32 6,18 14,28 20,14 26,28 32,20 28,34 42,32 30,40 38,52 24,46 20,60 16,46 2,52 10,40 0,32"/>
+    </g>
+  </svg>
+</div>
+
+<div class="corner corner-bl">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <g stroke="#009A44" stroke-width="1.2">
+      <path d="M0,0 Q40,80 0,160"/>
+      <path d="M0,0 Q80,40 160,0"/>
+      <path d="M0,0 Q30,55 0,110"/>
+      <path d="M0,0 Q55,30 110,0"/>
+      <path d="M0,0 Q18,36 0,72"/>
+      <path d="M0,0 Q36,18 72,0"/>
+      <line x1="0" y1="0" x2="140" y2="60"/>
+      <line x1="0" y1="0" x2="60"  y2="140"/>
+      <line x1="0" y1="0" x2="170" y2="30"/>
+      <line x1="0" y1="0" x2="30"  y2="170"/>
+    </g>
+    <g stroke="#C8920A" stroke-width="1" fill="rgba(200,146,10,0.08)">
+      <polygon points="30,12 38,8 46,12 46,20 38,24 30,20"/>
+      <polygon points="58,30 68,24 78,30 78,42 68,48 58,42"/>
+      <polygon points="10,45 18,41 26,45 26,53 18,57 10,53"/>
+      <polygon points="18,75 28,69 38,75 38,87 28,93 18,87"/>
+      <polygon points="88,14 96,10 104,14 104,22 96,26 88,22"/>
+    </g>
+    <g stroke="#009A44" stroke-width="0.8" fill="rgba(0,154,68,0.06)">
+      <polygon points="0,32 6,18 14,28 20,14 26,28 32,20 28,34 42,32 30,40 38,52 24,46 20,60 16,46 2,52 10,40 0,32"/>
+    </g>
+  </svg>
+</div>
+
+<div class="corner corner-br">
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <g stroke="#009A44" stroke-width="1.2">
+      <path d="M0,0 Q40,80 0,160"/>
+      <path d="M0,0 Q80,40 160,0"/>
+      <path d="M0,0 Q30,55 0,110"/>
+      <path d="M0,0 Q55,30 110,0"/>
+      <path d="M0,0 Q18,36 0,72"/>
+      <path d="M0,0 Q36,18 72,0"/>
+      <line x1="0" y1="0" x2="140" y2="60"/>
+      <line x1="0" y1="0" x2="60"  y2="140"/>
+      <line x1="0" y1="0" x2="170" y2="30"/>
+      <line x1="0" y1="0" x2="30"  y2="170"/>
+    </g>
+    <g stroke="#C8920A" stroke-width="1" fill="rgba(200,146,10,0.08)">
+      <polygon points="30,12 38,8 46,12 46,20 38,24 30,20"/>
+      <polygon points="58,30 68,24 78,30 78,42 68,48 58,42"/>
+      <polygon points="10,45 18,41 26,45 26,53 18,57 10,53"/>
+      <polygon points="18,75 28,69 38,75 38,87 28,93 18,87"/>
+      <polygon points="88,14 96,10 104,14 104,22 96,26 88,22"/>
+    </g>
+    <g stroke="#009A44" stroke-width="0.8" fill="rgba(0,154,68,0.06)">
+      <polygon points="0,32 6,18 14,28 20,14 26,28 32,20 28,34 42,32 30,40 38,52 24,46 20,60 16,46 2,52 10,40 0,32"/>
+    </g>
+  </svg>
+</div>
+
 <!-- MAIN CONTENT -->
 <div class="content">
+  <div class="greeting-sub">تتقدم أرامكو السعودية</div>
+  <span class="greeting-sub">بأطيب التهاني والتبريكات بمناسبة</span>
+  <br>
+  <div class="greeting-ar">عيد الفطر المبارك</div>
+  <div class="greeting-sub">تقبل الله منا ومنكم صالح الأعمال</div>
 
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-hex"></div>
+    <div class="divider-line"></div>
+  </div>
 
+  <div class="greeting-en">Eid Al-Fitr Mubarak</div>
 
-
-<div class="greeting-sub">
-تتقدم أرامكو السعودية 
-</div>
-<span class="greeting-sub">بأطيب التهاني والتبريكات بمناسبة </span>
-<br>
-<div class="greeting-ar">عيد الفطر المبارك</div>
-
-
-<div class="greeting-sub">
-تقبل الله منا ومنكم صالح الأعمال
-</div>
-
-<div class="divider">
-  <div class="divider-line"></div>
-  <div class="divider-hex"></div>
-  <div class="divider-line"></div>
-</div>
-
-<div class="greeting-en">Eid Al-Fitr Mubarak</div>
-
-</div>
+  
 
 <!-- COUNTER -->
 <div class="counter-badge" id="counterBadge">
-  <span id="countNum">0</span> معايدة من أصل <span id="countTotal">0</span>
+  <span id="countNum">0</span> greetings out of <span id="countTotal">0</span>
 </div>
 
-<!-- DRAW MODALS CONTAINER (supports multiple simultaneous) -->
+<!-- DRAW MODALS CONTAINER -->
 <div id="modalsContainer"></div>
 
-<!-- READ MODAL -->
-<div class="read-overlay" id="readOverlay">
-  <div class="read-card">
-    <div class="read-img-wrap">
-      <img class="read-img" id="readImg" src="" alt="معايدة">
-    </div>
-    <div class="read-close" id="readClose">Close ✕</div>
-  </div>
-</div>
-
 <!-- TOAST -->
-<div class="toast" id="toast">✦ تمّت إضافة معايدتك!</div>
+<div class="toast" id="toast">✦ Your greeting has been added!</div>
 
 <script src="script.js"></script>
 </body>
