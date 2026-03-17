@@ -9,99 +9,70 @@
   --gold: #C8920A;
   --lime: #9ED44A;
   --mint: #5CC8A0;
-
-  /* Real wall hex colors */
-  --wall-grey-light: #C8C8C8;
-  --wall-grey-dark:  #6E6E6E;
-  --wall-copper:     #B5785A;
-  --wall-beige:      #D4B89A;
-  --wall-blue:       #A8C8D8;
-  --wall-black:      #2A2A2A;
 }
 
 html, body {
   width: 100vw; height: 100vh; overflow: hidden;
   font-family: 'Tajawal', sans-serif;
   background: #EDF8F4;
-  position: relative; display: flex; flex-direction: column;
+  position: relative;
 }
 
 /* ── BACKGROUND ─────────────────────────────────────────── */
 .bg {
-  position: absolute; inset: 0;
+  position: fixed; inset: 0;
   background:
     radial-gradient(ellipse 90% 70% at 8% 0%, rgba(0,154,68,.18) 0%, transparent 55%),
     radial-gradient(ellipse 65% 60% at 94% 4%, rgba(75,145,220,.22) 0%, transparent 52%),
     radial-gradient(ellipse 75% 55% at 50% 108%, rgba(58,191,184,.18) 0%, transparent 50%),
     linear-gradient(155deg, #EEF9F0 0%, #EBF4FF 100%);
-  z-index: -1;
+  z-index: 0;
 }
 
 /* ── FLOATING MINI HEXAGONS ──────────────────────────────── */
 #floatCanvas {
-  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
 }
 
 /* ── INTERACTIVE HEX CANVAS ──────────────────────────────── */
 #hexCanvas {
-  position: absolute; inset: 0; z-index: 3; cursor: pointer;
+  position: fixed; inset: 0; z-index: 3; cursor: pointer;
   touch-action: none;
 }
 
-/* ── MAIN CONTENT ────────────────────────────────────────── */
+/* ── MAIN CONTENT — always perfectly centred ─────────────── */
 .content {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  z-index: 10; text-align: center; padding: 0 5vw;
+  position: fixed;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 10;
+  text-align: center;
+  padding: 0;
   pointer-events: none;
-}
-
-/* ── ARAMCO LOGO ─────────────────────────────────────────── */
-.aramco-logo {
-  margin-bottom: 2.5vh;
-  animation: fadeUp 1s ease-out both;
-}
-.aramco-logo-inner {
-  display: flex; align-items: center; gap: 14px;
-  background: rgba(255,255,255,.65);
-  border: 1px solid rgba(0,154,68,.25);
-  border-radius: 50px;
-  padding: 8px 22px 8px 16px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 18px rgba(0,154,68,.12);
-}
-.aramco-text-block {
-  display: flex; flex-direction: column; align-items: flex-start; gap: 1px;
-}
-.aramco-en {
-  font-size: clamp(11px,1.1vw,15px);
-  font-weight: 700; letter-spacing: 2.5px;
-  text-transform: uppercase;
-  color: var(--aramco-dark);
-}
-.aramco-ar {
-  font-size: clamp(10px,1vw,13px);
-  color: rgba(0,102,48,.6);
-  font-family: 'Tajawal', sans-serif;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 /* ── GREETING TEXT ───────────────────────────────────────── */
 .greeting-ar {
   font-family: 'Amiri', serif;
   font-size: clamp(52px,8.5vw,130px); font-weight: 700; line-height: 1.05;
-  background: linear-gradient(135deg, var(--aramco-dark), #157070, #1558A0);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: fadeUp 1.6s ease-out .56s both;
 }
 .greeting-sub {
   font-family: 'Amiri', serif;
-  font-size: clamp(20px,3.8vw,52px); margin-top: 10px;
-  background: linear-gradient(135deg, var(--aramco-green), #2278B0);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-size: clamp(20px,3.8vw,52px);
+  margin-top: 2px;
   animation: fadeUp 1.6s ease-out .25s both;
+  display: block;
 }
 .divider {
-  display: flex; align-items: center; gap: 15px; margin: 2.2vh 0;
+  display: flex; align-items: center; gap: 15px; margin: 1.5vh 0;
   animation: fadeUp 1.8s ease-out .4s both;
 }
 .divider-line {
@@ -116,20 +87,13 @@ html, body {
 .greeting-en {
   font-family: 'Amiri', serif;
   font-size: clamp(38px,6vw,80px); font-weight: 700; line-height: 1.1;
-  background: linear-gradient(135deg, var(--aramco-dark), #157070, #1558A0);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
   animation: fadeUp 1.3s ease-out .3s both;
-}
-.hijri-date {
-  margin-top: 10px; font-family: 'Amiri', serif;
-  font-size: clamp(16px,1.6vw,22px); color: rgba(0,80,40,.38);
-  animation: fadeUp 1.3s ease-out .55s both;
 }
 
 /* ── BUILDING NAME ───────────────────────────────────────── */
 .building-name-main {
-  margin-top: 3vh;
-  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  margin-bottom: 1.5vh;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
   animation: fadeUp 1.3s ease-out .7s both;
 }
 .building-name-rule {
@@ -137,20 +101,15 @@ html, body {
   background: linear-gradient(to right, transparent, rgba(0,154,68,.35), transparent);
 }
 .building-name-text {
-  font-size: clamp(50px ,2vw,50px);
+  font-size: clamp(14px, 2vw, 28px);
   letter-spacing: clamp(3px, 0.5vw, 8px);
   text-transform: uppercase; font-weight: 600;
-  background: linear-gradient(90deg, var(--aramco-dark), #1A6A8A);
-  -webkit-background-clip: text; background-clip: text; color: transparent;
   white-space: nowrap;
 }
 
 @keyframes fadeUp { from{opacity:0;transform:translateY(36px)} to{opacity:1;transform:translateY(0)} }
 
-
-/* ════════════════════════════════════════════════════════════
-   TEXT SHIMMER — subtle light sweep, no movement
-════════════════════════════════════════════════════════════ */
+/* ── TEXT SHIMMER ────────────────────────────────────────── */
 @keyframes shimmer {
   0%   { background-position: -200% center; }
   100% { background-position:  200% center; }
@@ -210,7 +169,7 @@ html, body {
 
 /* ── COUNTER ─────────────────────────────────────────────── */
 .counter-badge {
-  position: absolute; bottom: 2.5vh; left: 50%; transform: translateX(-50%);
+  position: fixed; bottom: 2.5vh; left: 50%; transform: translateX(-50%);
   z-index: 25; background: rgba(255,255,255,.72);
   border: 1px solid rgba(0,154,68,.25); border-radius: 20px;
   padding: 6px 22px; font-size: clamp(11px,1.1vw,14px);
@@ -221,7 +180,7 @@ html, body {
 .counter-badge span { color: var(--aramco-green); font-weight: 700; }
 
 /* ════════════════════════════════════════════════════════════
-   DRAW MODAL — multi-instance, compact, side-docked
+   DRAW MODAL
 ════════════════════════════════════════════════════════════ */
 .draw-modal {
   position: fixed; z-index: 100;
@@ -250,18 +209,19 @@ html, body {
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
 
-/* Drawing canvas wrapper */
 .draw-wrap {
   position: relative; border-radius: 12px; overflow: hidden;
   border: 1.5px solid rgba(0,154,68,.25);
   box-shadow: inset 0 2px 8px rgba(0,154,68,.06);
+  /* transparent background so drawing has no fill */
+  background: transparent;
 }
 .draw-wrap canvas {
   display: block; touch-action: none; cursor: crosshair;
   width: 100%; height: clamp(140px, 22vh, 220px);
+  background: transparent;
 }
 
-/* Canvas toolbar */
 .draw-toolbar {
   display: flex; align-items: center; justify-content: space-between;
   padding: 7px 10px; background: rgba(0,154,68,.05);
@@ -272,14 +232,12 @@ html, body {
 .toolbar-right { display: flex; align-items: center; gap: 6px; }
 .tool-label { font-size: 11px; color: rgba(0,60,30,.45); }
 
-/* Color swatches */
 .swatch {
   width: 22px; height: 22px; border-radius: 50%; border: 2.5px solid transparent;
   cursor: pointer; transition: transform .15s, border-color .15s;
 }
 .swatch.active, .swatch:hover { transform: scale(1.3); border-color: rgba(0,0,0,.22); }
 
-/* Size buttons */
 .size-btn {
   background: rgba(0,154,68,.1); border: 1px solid rgba(0,154,68,.22);
   border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
@@ -289,7 +247,6 @@ html, body {
 .size-btn.active { background: var(--aramco-green); }
 .size-btn span { background: #003820; border-radius: 50%; display: block; }
 
-/* Clear button */
 .btn-clear {
   padding: 4px 12px; border-radius: 20px;
   background: rgba(255,80,80,.07); border: 1px solid rgba(220,50,50,.2);
@@ -298,7 +255,6 @@ html, body {
 }
 .btn-clear:hover { background: rgba(255,80,80,.16); }
 
-/* Actions */
 .modal-actions { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
 .btn {
   padding: 9px 24px; border-radius: 50px; border: none;
@@ -317,58 +273,7 @@ html, body {
 }
 .btn-secondary:hover { background: rgba(0,60,30,.12); }
 
-/* ════════════════════════════════════════════════════════════
-   READ POPUP — inline, positioned near hex, multi-instance
-════════════════════════════════════════════════════════════ */
-.read-popup {
-  position: fixed;
-  z-index: 9000;
-  background: #fffdf0;
-  border: 1.5px solid rgba(200,146,10,.35);
-  border-radius: 16px;
-  box-shadow: 0 8px 36px rgba(0,0,0,.22), 0 2px 0 rgba(255,255,255,.9) inset;
-  overflow: hidden;
-  opacity: 0;
-  transform: scale(0.78) translateY(8px);
-  transition: opacity .22s ease, transform .25s cubic-bezier(.34,1.56,.64,1);
-  cursor: default;
-}
-.read-popup::before {
-  content:''; position:absolute; top:0; left:50%; transform:translateX(-50%);
-  width:55%; height:2px;
-  background: linear-gradient(to right,transparent,var(--gold),transparent);
-  border-radius:2px;
-}
-.read-popup.open {
-  opacity: 1;
-  transform: scale(1) translateY(0);
-}
-.read-popup img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  display: block;
-  padding: 6px;
-}
-.read-popup-close {
-  position: absolute;
-  top: 7px; right: 8px;
-  background: rgba(0,0,0,.4);
-  color: #fff;
-  border-radius: 50%;
-  width: 24px; height: 24px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 12px;
-  cursor: pointer;
-  transition: background .15s;
-  line-height: 1;
-  z-index: 2;
-}
-.read-popup-close:hover { background: rgba(0,0,0,.7); }
-
-
-/* ════════════════════════════════════════════════════════════
-   CORNER ORNAMENTS — geometric Islamic pattern
-════════════════════════════════════════════════════════════ */
+/* ── CORNER ORNAMENTS ────────────────────────────────────── */
 .corner {
   position: fixed;
   z-index: 2;
@@ -394,3 +299,88 @@ html, body {
   opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── HINT BAR ────────────────────────────────────────────── */
+.hint-bar {
+  position: fixed;
+  bottom: 5.5vh;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(0,154,68,.22);
+  border-radius: 50px;
+  padding: 10px 22px 10px 16px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 24px rgba(0,154,68,.13), 0 1px 0 rgba(255,255,255,.9) inset;
+  pointer-events: none;
+  opacity: 0;
+  animation: hintAppear 0.7s cubic-bezier(.34,1.56,.64,1) 2.2s forwards;
+  white-space: nowrap;
+}
+
+@keyframes hintAppear {
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.hint-bar-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--aramco-green), #007A38);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  animation: hintPulse 2.5s ease-in-out 3s infinite;
+  box-shadow: 0 2px 10px rgba(0,154,68,.35);
+}
+
+@keyframes hintPulse {
+  0%, 100% { box-shadow: 0 2px 10px rgba(0,154,68,.35); transform: scale(1); }
+  50%       { box-shadow: 0 2px 22px rgba(0,154,68,.55); transform: scale(1.08); }
+}
+
+.hint-bar-icon svg {
+  width: 16px; height: 16px; fill: none;
+  stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
+}
+
+.hint-bar-text {
+  display: flex; flex-direction: column; gap: 1px;
+}
+
+.hint-bar-title {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(12px, 1.15vw, 15px);
+  font-weight: 700;
+  color: var(--aramco-dark);
+  letter-spacing: 0.2px;
+}
+
+.hint-bar-sub {
+  font-family: 'Tajawal', sans-serif;
+  font-size: clamp(10px, 0.95vw, 12px);
+  color: rgba(0,80,40,.45);
+  letter-spacing: 0.1px;
+}
+
+.hint-bar-arrow {
+  margin-left: 4px;
+  display: flex; gap: 3px; align-items: center;
+}
+.hint-bar-arrow span {
+  display: block;
+  width: 5px; height: 5px;
+  border-right: 1.8px solid rgba(0,154,68,.5);
+  border-top: 1.8px solid rgba(0,154,68,.5);
+  transform: rotate(45deg);
+  animation: hintChevron 1.4s ease-in-out infinite;
+}
+.hint-bar-arrow span:nth-child(2) { animation-delay: 0.15s; opacity: .6; }
+.hint-bar-arrow span:nth-child(3) { animation-delay: 0.30s; opacity: .3; }
+
+@keyframes hintChevron {
+  0%, 100% { opacity: 0.2; }
+  50%       { opacity: 1;   }
+}
