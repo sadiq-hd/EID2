@@ -1,150 +1,6 @@
 /* ════════════════════════════════════════════════════════════
-   Eid Al-Fitr Mubarak — Research and Innovation Complex
-   script.js  v4: centred content, transparent hex drawing, HiDPI
+   hexGrid.js — Hex Grid + Drawing + Persistence + Modals + Toast
 ════════════════════════════════════════════════════════════ */
-
-/* ── FLOATING SHAPES: hexagons + crescents + stars ──────── */
-(function () {
-  const fc = document.getElementById('floatCanvas');
-  const fCtx = fc.getContext('2d');
-
-  const palette = [
-    'rgba(0,154,68,',
-    'rgba(92,200,160,',
-    'rgba(58,191,184,',
-    'rgba(91,174,232,',
-    'rgba(200,146,10,',
-  ];
-  const goldPalette = [
-    'rgba(200,146,10,',
-    'rgba(220,170,20,',
-    'rgba(180,130,5,',
-  ];
-
-  let floaters = [];
-
-  function hexPoints(cx, cy, r, angle) {
-    const pts = [];
-    for (let i = 0; i < 6; i++) {
-      const a = angle + Math.PI / 180 * (60 * i - 30);
-      pts.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
-    }
-    return pts;
-  }
-
-  function drawCrescent(ctx, cx, cy, r, rot, color, alpha) {
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rot);
-    const outerR = r;
-    const innerR = r * 0.82;
-    const offset = r * 0.52;
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
-    ctx.clip();
-    ctx.beginPath();
-    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
-    ctx.fillStyle = color + alpha.toFixed(2) + ')';
-    ctx.fill();
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.arc(offset, 0, innerR, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
-    ctx.beginPath();
-    ctx.arc(0, 0, outerR, 0, Math.PI * 2);
-    ctx.strokeStyle = color + Math.min(1, alpha * 1.8).toFixed(2) + ')';
-    ctx.lineWidth = 0.7;
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  function drawStar(ctx, cx, cy, r, points, rot, color, alpha) {
-    const inner = r * 0.42;
-    ctx.beginPath();
-    for (let i = 0; i < points * 2; i++) {
-      const a = rot + (Math.PI / points) * i - Math.PI / 2;
-      const rad = i % 2 === 0 ? r : inner;
-      i === 0
-        ? ctx.moveTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a))
-        : ctx.lineTo(cx + rad * Math.cos(a), cy + rad * Math.sin(a));
-    }
-    ctx.closePath();
-    ctx.fillStyle = color + alpha.toFixed(2) + ')';
-    ctx.fill();
-    ctx.strokeStyle = color + Math.min(1, alpha * 1.5).toFixed(2) + ')';
-    ctx.lineWidth = 0.5;
-    ctx.stroke();
-  }
-
-  function spawn() {
-    const roll = Math.random();
-    const type = roll < 0.50 ? 'hex' : roll < 0.75 ? 'crescent' : 'star';
-    const isGold = type !== 'hex';
-    const pal = isGold ? goldPalette : palette;
-    const r = type === 'hex' ? Math.random() * 12 + 6
-            : type === 'crescent' ? Math.random() * 10 + 7
-            : Math.random() * 7 + 4;
-    return {
-      type, x: Math.random() * fc.width, y: fc.height + r * 2,
-      r, vx: (Math.random() - 0.5) * 0.35,
-      vy: -(Math.random() * 0.45 + 0.15),
-      rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * (type === 'crescent' ? 0.006 : 0.013),
-      alpha: 0,
-      maxAlpha: isGold ? Math.random() * 0.22 + 0.08 : Math.random() * 0.18 + 0.06,
-      fadeState: 'in',
-      color: pal[Math.floor(Math.random() * pal.length)],
-      starPoints: type === 'star' ? (Math.random() < 0.5 ? 5 : 6) : 0,
-    };
-  }
-
-  function resizeFloat() {
-    fc.width = innerWidth; fc.height = innerHeight;
-    floaters = Array.from({ length: 38 }, () => {
-      const f = spawn();
-      f.y = Math.random() * fc.height;
-      f.alpha = Math.random() * f.maxAlpha;
-      return f;
-    });
-  }
-
-  function drawFloat() {
-    fCtx.clearRect(0, 0, fc.width, fc.height);
-    floaters.forEach((f, i) => {
-      f.x += f.vx; f.y += f.vy; f.rot += f.rotSpeed;
-      if (f.fadeState === 'in') {
-        f.alpha += 0.003;
-        if (f.alpha >= f.maxAlpha) f.fadeState = 'hold';
-      } else if (f.fadeState === 'hold') {
-        if (f.y < fc.height * 0.15) f.fadeState = 'out';
-      } else {
-        f.alpha -= 0.004;
-        if (f.alpha <= 0) { floaters[i] = spawn(); return; }
-      }
-      if (f.type === 'hex') {
-        const pts = hexPoints(f.x, f.y, f.r, f.rot);
-        fCtx.beginPath();
-        fCtx.moveTo(pts[0][0], pts[0][1]);
-        pts.slice(1).forEach(p => fCtx.lineTo(p[0], p[1]));
-        fCtx.closePath();
-        fCtx.strokeStyle = f.color + (f.alpha * 1.4).toFixed(2) + ')';
-        fCtx.lineWidth = 1.2; fCtx.stroke();
-        fCtx.fillStyle = f.color + f.alpha.toFixed(2) + ')';
-        fCtx.fill();
-      } else if (f.type === 'crescent') {
-        drawCrescent(fCtx, f.x, f.y, f.r, f.rot, f.color, f.alpha);
-      } else {
-        drawStar(fCtx, f.x, f.y, f.r, f.starPoints, f.rot, f.color, f.alpha);
-      }
-    });
-    requestAnimationFrame(drawFloat);
-  }
-
-  resizeFloat(); drawFloat();
-  window.addEventListener('resize', resizeFloat);
-})();
 
 /* ── PERSISTENCE ─────────────────────────────────────────── */
 let greetings = {};
@@ -153,22 +9,11 @@ function saveData() {
   try { localStorage.setItem('eid_greetings_v4', JSON.stringify(greetings)); } catch (e) {}
 }
 
-/* ── HEX GRID  ───────────────────────────────────────────── */
-/*
- * HiDPI rendering:
- *   - hexCanvas is sized at CSS pixels (innerWidth × innerHeight)
- *   - internally scaled by devicePixelRatio so lines stay crisp on
- *     Retina / high-DPI displays regardless of screen size.
- * Transparent drawing:
- *   - When saving a greeting we capture only the strokes (transparent bg).
- *   - When rendering on the hex we composite the drawing OVER the hex fill
- *     without any white/yellow background.
- */
-
+/* ── HEX GRID ────────────────────────────────────────────── */
 const hexCanvas = document.getElementById('hexCanvas');
 const hCtx = hexCanvas.getContext('2d');
 let hexes = [], hexR = 0, hoveredId = null;
-let dpr = window.devicePixelRatio || 1; // updated on resize
+let dpr = window.devicePixelRatio || 1;
 
 const DEAD_TOP_PCT    = 0.33;
 const DEAD_BOTTOM_PCT = 0.70;
@@ -184,28 +29,28 @@ const rightColors = [
   ['#DAEBC7', '#B2DAC5'],
 ];
 
-/* Preloaded Image cache so drawImage is always ready */
+/* ── IMAGE CACHE ─────────────────────────────────────────── */
 const imgCache = {};
 function getCachedImage(src) {
   if (imgCache[src]) return imgCache[src];
   const img = new Image();
   img.src = src;
-  img.onload = () => drawAll(hoveredId); // redraw once loaded
+  img.onload = () => drawAll(hoveredId);
   imgCache[src] = img;
   return img;
 }
 
+/* ── BUILD GRID ──────────────────────────────────────────── */
 function buildGrid() {
   const W = hexCanvas.clientWidth;
   const H = hexCanvas.clientHeight;
 
   hexR = Math.max(18, Math.min(76, W * 0.018));
-const hw = hexR * Math.sqrt(3) * 1.08;
+  const hw = hexR * Math.sqrt(3) * 1.08;
   const vGap = hexR * 2 * 0.77;
 
   hexes = [];
   const MAX_HEXES = 345;
-
   const nRows = Math.ceil(H / vGap) + 2;
   const nCols = Math.ceil(W / hw) + 2;
 
@@ -213,11 +58,11 @@ const hw = hexR * Math.sqrt(3) * 1.08;
   for (let row = -1; row < nRows; row++) {
     for (let col = -1; col < nCols; col++) {
       const off = (row % 2 !== 0) ? hw * 0.5 : 0;
-const cx = col * hw + off;
-const cy = row * vGap;
+      const cx = col * hw + off;
+      const cy = row * vGap;
       const mid = W / 2;
       const side = cx < mid ? 'left' : 'right';
-      const inSideZone = side === 'left' ? cx < W * 0.30 : cx > W * 0.68;
+      const inSideZone = side === 'left' ? cx < W * 0.24 : cx > W * 0.68;
       if (!inSideZone) continue;
       const inDeadTop = cy < H * DEAD_TOP_PCT;
       const inDeadBottom = cy > H * DEAD_BOTTOM_PCT;
@@ -228,7 +73,7 @@ const cy = row * vGap;
   }
 }
 
-/* Draw a hex path in CSS-pixel space (ctx already scaled by dpr) */
+/* ── DRAW HEX ────────────────────────────────────────────── */
 function hexPath(cx, cy, r) {
   hCtx.beginPath();
   for (let i = 0; i < 6; i++) {
@@ -261,11 +106,10 @@ function drawOneHex(h, hl) {
   hCtx.shadowBlur = 0; hCtx.globalAlpha = 1;
 
   hCtx.strokeStyle = 'rgba(80,60,20,.25)';
-  hCtx.lineWidth = 1; // CSS px — canvas transform handles DPI
+  hCtx.lineWidth = 1;
   hCtx.stroke();
 
   if (g) {
-    /* Composite drawing (transparent PNG) on top of hex fill */
     const img = getCachedImage(g.img);
     if (img.complete && img.naturalWidth > 0) {
       const iw = hexR * 1.7, ih = hexR * 1.7;
@@ -292,19 +136,15 @@ function drawAll(hlId) {
   if (hlId) { const h = hexes.find(x => x.id === hlId); if (h) drawOneHex(h, true); }
 }
 
+/* ── RESIZE ──────────────────────────────────────────────── */
 function resize() {
   dpr = window.devicePixelRatio || 1;
   const W = innerWidth, H = innerHeight;
-
-  /* Physical pixels = CSS pixels × dpr for sharp rendering */
   hexCanvas.width  = W * dpr;
   hexCanvas.height = H * dpr;
   hexCanvas.style.width  = W + 'px';
   hexCanvas.style.height = H + 'px';
-
-  /* Scale the context so we can draw in CSS pixels */
   hCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
   buildGrid();
   drawAll();
   updateCounter();
@@ -312,6 +152,7 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
+/* ── HIT TEST ────────────────────────────────────────────── */
 function hexAt(px, py) {
   let best = null, bd = Infinity;
   hexes.forEach(h => {
@@ -321,7 +162,7 @@ function hexAt(px, py) {
   return best;
 }
 
-/* ── HOVER ──────────────────────────────────────────────── */
+/* ── HOVER ───────────────────────────────────────────────── */
 function onMove(ex, ey) {
   const h = hexAt(ex, ey);
   const id = h ? h.id : null;
@@ -350,13 +191,14 @@ function onTap(ex, ey) {
   else openDrawModal(h, ex, ey);
 }
 
+/* ── COUNTER ─────────────────────────────────────────────── */
 function updateCounter() {
   document.getElementById('countNum').textContent = Object.keys(greetings).length;
   document.getElementById('countTotal').textContent = hexes.length;
 }
 
 /* ════════════════════════════════════════════════════════════
-   DRAW MODAL  — transparent canvas drawing
+   DRAW MODAL
 ════════════════════════════════════════════════════════════ */
 const modalsContainer = document.getElementById('modalsContainer');
 const activeModals = {};
@@ -421,7 +263,6 @@ function openDrawModal(hex, tapX, tapY) {
     const cssH = dc.offsetHeight;
     dc.width  = cssW * localDpr;
     dc.height = cssH * localDpr;
-    /* TRANSPARENT background — no fill at all */
     const ctx = dc.getContext('2d');
     ctx.setTransform(localDpr, 0, 0, localDpr, 0, 0);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -504,7 +345,6 @@ function openDrawModal(hex, tapX, tapY) {
       setTimeout(() => dc.style.outline = '', 1200);
       return;
     }
-    /* Save as PNG with transparent background */
     greetings[hex.id] = { img: dc.toDataURL('image/png', 1.0) };
     saveData(); closeModal(); drawAll(); updateCounter(); showToast();
   });
@@ -516,7 +356,9 @@ function openDrawModal(hex, tapX, tapY) {
   modal.addEventListener('click',      e => e.stopPropagation());
 }
 
-/* ── READ POPUP ──────────────────────────────────────────── */
+/* ════════════════════════════════════════════════════════════
+   READ POPUP
+════════════════════════════════════════════════════════════ */
 const activeReadPopups = {};
 
 function showRead(hexId) {

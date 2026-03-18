@@ -12,7 +12,8 @@
 }
 
 html, body {
-  width: 100vw; height: 100vh; overflow: hidden;
+  width: 100%; height: 100%;
+  overflow: hidden;
   font-family: 'Tajawal', sans-serif;
   background: #EDF8F4;
   position: relative;
@@ -32,78 +33,86 @@ html, body {
 /* ── FLOATING MINI HEXAGONS ──────────────────────────────── */
 #floatCanvas {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  width: 100% !important; height: 100% !important;
 }
 
 /* ── INTERACTIVE HEX CANVAS ──────────────────────────────── */
 #hexCanvas {
   position: fixed; inset: 0; z-index: 3; cursor: pointer;
   touch-action: none;
+  width: 100% !important; height: 100% !important;
 }
 
-/* ── MAIN CONTENT — always perfectly centred ─────────────── */
+/* ── MAIN CONTENT — perfectly centred, fully responsive ─── */
 .content {
   position: fixed;
-  top: 50%;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(-50%);
   z-index: 10;
   text-align: center;
-  padding: 0;
   pointer-events: none;
-  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: clamp(2px, 0.5vh, 8px);
+  padding: clamp(60px, 8vw, 120px) clamp(16px, 4vw, 60px);
 }
 
 /* ── GREETING TEXT ───────────────────────────────────────── */
 .greeting-ar {
   font-family: 'Amiri', serif;
-  font-size: clamp(52px,8.5vw,130px); font-weight: 700; line-height: 1.05;
+  font-size: clamp(36px, 7vw, 130px);
+  font-weight: 700;
+  line-height: 1.05;
   animation: fadeUp 1.6s ease-out .56s both;
 }
 .greeting-sub {
   font-family: 'Amiri', serif;
-  font-size: clamp(20px,3.8vw,52px);
+  font-size: clamp(14px, 2.8vw, 52px);
   margin-top: 2px;
   animation: fadeUp 1.6s ease-out .25s both;
   display: block;
 }
 .divider {
-  display: flex; align-items: center; gap: 15px; margin: 1.5vh 0;
+  display: flex; align-items: center; gap: 15px;
+  margin: clamp(4px, 1vh, 16px) 0;
   animation: fadeUp 1.8s ease-out .4s both;
 }
 .divider-line {
-  width: clamp(80px,18vw,280px); height: 1.5px;
+  width: clamp(50px, 14vw, 280px); height: 1.5px;
   background: linear-gradient(to right,transparent,rgba(0,154,68,.45),transparent);
 }
 .divider-hex {
-  width: 18px; height: 18px;
+  width: clamp(10px, 1.2vw, 18px);
+  height: clamp(10px, 1.2vw, 18px);
   clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
   background: var(--aramco-green);
 }
 .greeting-en {
   font-family: 'Amiri', serif;
-  font-size: clamp(38px,6vw,80px); font-weight: 700; line-height: 1.1;
+  font-size: clamp(26px, 5vw, 80px);
+  font-weight: 700; line-height: 1.1;
   animation: fadeUp 1.3s ease-out .3s both;
 }
 
 /* ── BUILDING NAME ───────────────────────────────────────── */
 .building-name-main {
-  margin-bottom: 1.5vh;
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  margin-bottom: clamp(4px, 1.2vh, 20px);
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(4px, 0.6vh, 8px);
   animation: fadeUp 1.3s ease-out .7s both;
 }
 .building-name-rule {
-  width: clamp(120px,25vw,360px); height: 1px;
+  width: clamp(80px, 20vw, 360px); height: 1px;
   background: linear-gradient(to right, transparent, rgba(0,154,68,.35), transparent);
 }
 .building-name-text {
-  font-size: clamp(14px, 2vw, 28px);
-  letter-spacing: clamp(3px, 0.5vw, 8px);
-  text-transform: uppercase; font-weight: 600;
+  font-size: clamp(22px, 4vw, 48px);
+  letter-spacing: clamp(3px, 0.6vw, 10px);
+  text-transform: uppercase; font-weight: 800;
   white-space: nowrap;
 }
 
@@ -167,17 +176,6 @@ html, body {
   animation: shimmer 7s linear 3s infinite;
 }
 
-/* ── COUNTER ─────────────────────────────────────────────── */
-.counter-badge {
-  position: fixed; bottom: 2.5vh; left: 50%; transform: translateX(-50%);
-  z-index: 25; background: rgba(255,255,255,.72);
-  border: 1px solid rgba(0,154,68,.25); border-radius: 20px;
-  padding: 6px 22px; font-size: clamp(11px,1.1vw,14px);
-  color: rgba(0,60,30,.5); backdrop-filter: blur(6px);
-  pointer-events: none; box-shadow: 0 2px 12px rgba(0,154,68,.1);
-  white-space: nowrap;
-}
-.counter-badge span { color: var(--aramco-green); font-weight: 700; }
 
 /* ════════════════════════════════════════════════════════════
    DRAW MODAL
@@ -188,7 +186,7 @@ html, body {
   border: 1.5px solid rgba(0,154,68,.3);
   border-radius: 20px;
   padding: 16px 16px 14px;
-  width: clamp(260px,30vw,380px);
+  width: clamp(240px, 28vw, 380px);
   box-shadow: 0 10px 50px rgba(0,154,68,.2), 0 2px 0 rgba(255,255,255,.9) inset;
   transform: scale(.93) translateY(12px);
   opacity: 0;
@@ -204,7 +202,7 @@ html, body {
 
 .modal-header { text-align: center; margin-bottom: 10px; }
 .modal-header h2 {
-  font-family: 'Amiri', serif; font-size: clamp(15px,1.8vw,20px);
+  font-family: 'Amiri', serif; font-size: clamp(14px,1.6vw,20px);
   background: linear-gradient(135deg,var(--aramco-dark),#157070);
   -webkit-background-clip: text; background-clip: text; color: transparent;
 }
@@ -213,12 +211,11 @@ html, body {
   position: relative; border-radius: 12px; overflow: hidden;
   border: 1.5px solid rgba(0,154,68,.25);
   box-shadow: inset 0 2px 8px rgba(0,154,68,.06);
-  /* transparent background so drawing has no fill */
   background: transparent;
 }
 .draw-wrap canvas {
   display: block; touch-action: none; cursor: crosshair;
-  width: 100%; height: clamp(140px, 22vh, 220px);
+  width: 100%; height: clamp(120px, 18vh, 220px);
   background: transparent;
 }
 
@@ -257,8 +254,9 @@ html, body {
 
 .modal-actions { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
 .btn {
-  padding: 9px 24px; border-radius: 50px; border: none;
-  font-family: 'Tajawal', sans-serif; font-size: clamp(12px,1.3vw,15px);
+  padding: clamp(7px,1vh,9px) clamp(16px,2vw,24px);
+  border-radius: 50px; border: none;
+  font-family: 'Tajawal', sans-serif; font-size: clamp(11px,1.2vw,15px);
   cursor: pointer; transition: all .2s; font-weight: 600;
 }
 .btn-primary {
@@ -279,8 +277,9 @@ html, body {
   z-index: 2;
   pointer-events: none;
   opacity: 0.18;
-  width: clamp(100px, 14vw, 200px);
-  height: clamp(100px, 14vw, 200px);
+  width: clamp(120px, 18vw, 380px);
+  height: clamp(120px, 18vw, 380px);
+
 }
 .corner svg { width: 100%; height: 100%; }
 .corner-tl { top: 0;    left: 0; }
@@ -288,99 +287,17 @@ html, body {
 .corner-bl { bottom: 0; left: 0;   transform: scaleY(-1); }
 .corner-br { bottom: 0; right: 0;  transform: scale(-1); }
 
-/* ── TOAST ───────────────────────────────────────────────── */
-.toast {
-  position: fixed; bottom: 8vh; left: 50%; z-index: 200;
-  transform: translateX(-50%) translateY(16px);
-  background: linear-gradient(135deg, var(--aramco-green), #007A38);
-  color: #fff; font-family: 'Tajawal', sans-serif; font-weight: 700;
-  font-size: clamp(13px,1.5vw,16px); padding: 12px 30px; border-radius: 50px;
-  box-shadow: 0 8px 30px rgba(0,154,68,.4);
-  opacity: 0; pointer-events: none; transition: opacity .3s, transform .3s;
+/* ── RESPONSIVE BREAKPOINTS ──────────────────────────────── */
+@media (max-width: 480px) {
+  .content { gap: 1px; padding: 50px 12px; }
+  .corner { width: 55px; height: 55px; }
+  .bottom-bar { padding: 6px 10px; gap: 8px; }
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* ── HINT BAR ────────────────────────────────────────────── */
-.hint-bar {
-  position: fixed;
-  bottom: 5.5vh;
-  left: 50%;
-  transform: translateX(-50%) translateY(20px);
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: rgba(255,255,255,.82);
-  border: 1px solid rgba(0,154,68,.22);
-  border-radius: 50px;
-  padding: 10px 22px 10px 16px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 24px rgba(0,154,68,.13), 0 1px 0 rgba(255,255,255,.9) inset;
-  pointer-events: none;
-  opacity: 0;
-  animation: hintAppear 0.7s cubic-bezier(.34,1.56,.64,1) 2.2s forwards;
-  white-space: nowrap;
+@media (max-height: 500px) {
+  .content { gap: 0px; padding: 44px 16px; }
+  .divider { margin: 2px 0; }
+  .building-name-main { margin-bottom: 2px; gap: 3px; }
 }
-
-@keyframes hintAppear {
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-
-.hint-bar-icon {
-  width: 32px; height: 32px;
-  background: linear-gradient(135deg, var(--aramco-green), #007A38);
-  border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  animation: hintPulse 2.5s ease-in-out 3s infinite;
-  box-shadow: 0 2px 10px rgba(0,154,68,.35);
-}
-
-@keyframes hintPulse {
-  0%, 100% { box-shadow: 0 2px 10px rgba(0,154,68,.35); transform: scale(1); }
-  50%       { box-shadow: 0 2px 22px rgba(0,154,68,.55); transform: scale(1.08); }
-}
-
-.hint-bar-icon svg {
-  width: 16px; height: 16px; fill: none;
-  stroke: #fff; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-}
-
-.hint-bar-text {
-  display: flex; flex-direction: column; gap: 1px;
-}
-
-.hint-bar-title {
-  font-family: 'Tajawal', sans-serif;
-  font-size: clamp(12px, 1.15vw, 15px);
-  font-weight: 700;
-  color: var(--aramco-dark);
-  letter-spacing: 0.2px;
-}
-
-.hint-bar-sub {
-  font-family: 'Tajawal', sans-serif;
-  font-size: clamp(10px, 0.95vw, 12px);
-  color: rgba(0,80,40,.45);
-  letter-spacing: 0.1px;
-}
-
-.hint-bar-arrow {
-  margin-left: 4px;
-  display: flex; gap: 3px; align-items: center;
-}
-.hint-bar-arrow span {
-  display: block;
-  width: 5px; height: 5px;
-  border-right: 1.8px solid rgba(0,154,68,.5);
-  border-top: 1.8px solid rgba(0,154,68,.5);
-  transform: rotate(45deg);
-  animation: hintChevron 1.4s ease-in-out infinite;
-}
-.hint-bar-arrow span:nth-child(2) { animation-delay: 0.15s; opacity: .6; }
-.hint-bar-arrow span:nth-child(3) { animation-delay: 0.30s; opacity: .3; }
-
-@keyframes hintChevron {
-  0%, 100% { opacity: 0.2; }
-  50%       { opacity: 1;   }
+@media (min-width: 1400px) {
+  .content { gap: 8px; }
 }

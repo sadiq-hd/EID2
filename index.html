@@ -6,7 +6,7 @@
 <title>عيد الفطر المبارك — Research and Innovation Complex</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
-</head>
+<link rel="stylesheet" href="components.css">
 <body>
 
 <div class="bg"></div>
@@ -142,22 +142,34 @@
   <div class="greeting-en">Eid Al-Fitr Mubarak</div>
 </div>
 
-<!-- HINT BAR -->
-<div class="hint-bar">
-  <div class="hint-bar-icon">
-    <svg viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-  </div>
-  <div class="hint-bar-text">
-    <span class="hint-bar-title">Tap any hexagon to leave your Eid greeting</span>
-  </div>
-  <div class="hint-bar-arrow">
-    <span></span><span></span><span></span>
-  </div>
-</div>
+<!-- BOTTOM BAR -->
+<div class="bottom-bar" id="hintBar">
 
-<!-- COUNTER -->
-<div class="counter-badge" id="counterBadge">
-  <span id="countNum">0</span> greetings out of <span id="countTotal">0</span>
+  <div class="sticky-ico">
+    <div class="s-paper">
+      <div class="s-tape"></div>
+      <div class="s-body">
+        <div class="s-ar">عيد<br>مبارك</div>
+        <div class="s-stars"><span>★</span><span>☽</span><span>★</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bar-divider"></div>
+
+  <div class="bar-body">
+    <div class="bar-title">Share Your Eid Greeting</div>
+    <div class="bar-sub">Join us in celebrating Eid by sharing your greetings and messages on the digital screen, spreading joy and festive cheer across our community.</div>
+  </div>
+
+  <div class="bar-divider2"></div>
+
+  <div class="bar-counter">
+    <div class="counter-num" id="countNum">0</div>
+    <div class="counter-label">greetings</div>
+    <div class="counter-total">out of <strong id="countTotal">0</strong></div>
+  </div>
+
 </div>
 
 <!-- DRAW MODALS CONTAINER -->
@@ -165,7 +177,7 @@
 
 <!-- TOAST -->
 <div class="toast" id="toast">✦ Your greeting has been added!</div>
-
-<script src="script.js"></script>
+<script src="floatCanvas.js"></script>
+<script src="hexGrid.js"></script>
 </body>
 </html>
